@@ -8,25 +8,25 @@ public class IntTest
 	public static void main(String[] args)
 	{
 		testOne();
-		testTwo();
-		testThree();
-		testFour();
-		testFive();
-		testSix();
-		testSeven();
-		testEight();
-		testNine();
-		testTen();
-		testEleven();
-		testTwelve();
-		testThirteen();
-		testFourteen();
-		testFifteen();
-		testSixteen();
-		testSeventeen();
-		testEighteen();
-		testNineteen();
-		testTwenty();
+//		testTwo();
+//		testThree();
+//		testFour();
+//		testFive();
+//		testSix();
+//		testSeven();
+//		testEight();
+//		testNine();
+//		testTen();
+//		testEleven();
+//		testTwelve();
+//		testThirteen();
+//		testFourteen();
+//		testFifteen();
+//		testSixteen();
+//		testSeventeen();
+//		testEighteen();
+//		testNineteen();
+//		testTwenty();
 	}
 
 	public static void testOne()
@@ -43,12 +43,24 @@ public class IntTest
 			arr[i] = rand.nextInt(1000);
 		}
 
+		for (int i = 0; i < arr.length; i++)
+		{
+			System.out.print(arr[i] + ", ");
+		}
+		System.out.println("");
+		
 		long start = System.currentTimeMillis();
 		InsertionSort<Integer> sort = new InsertionSort<>();
 		sort.sort(arr, 0, n-1, new IntComparator<Integer>());
 		long end = System.currentTimeMillis();
 		long runtime = end - start;
 
+		for (int i = 0; i < arr.length; i++)
+		{
+			System.out.print(arr[i] + ", ");
+		}
+		System.out.println("");
+		
 		System.out.println("Array sorted in " + runtime + " milliseconds");
 
 	}
