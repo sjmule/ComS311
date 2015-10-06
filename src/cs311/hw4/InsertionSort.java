@@ -16,12 +16,14 @@ public class InsertionSort<T> implements ISort<T>
 
 		for (int i = start + 1; i <= end; i++)
 		{
-			int j = i;
-			while (j > 0 && comp.compare(arr[j - 1], arr[j]) > 0)
+			for (int j = i; j > start; j--)
 			{
-				T temp = arr[j - 1];
-				arr[j - 1] = arr[j];
-				arr[j] = temp;
+				if (comp.compare(arr[j - 1], arr[j]) > 0)
+				{
+					T temp = arr[j - 1];
+					arr[j - 1] = arr[j];
+					arr[j] = temp;
+				}
 			}
 		}
 	}

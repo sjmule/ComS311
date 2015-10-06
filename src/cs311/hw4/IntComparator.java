@@ -12,6 +12,8 @@ public class IntComparator<T> implements Comparator<T>
 			throw new NullPointerException();
 		if(!a.getClass().equals(b.getClass()))
 			throw new ClassCastException();
-		return Integer.compare((int)a, (int)b);
+		Integer a1 = (Integer) a;
+		Integer b1 = (Integer) b;
+		return a1.intValue() - b1.intValue();
 	}
 }
