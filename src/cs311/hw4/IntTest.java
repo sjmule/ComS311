@@ -43,7 +43,7 @@ public class IntTest
 			arr[i] = rand.nextInt(1000);
 		}
 
-		for (int i = 0; i < arr.length; i++)
+		for(int i = 0; i < arr.length; i++)
 		{
 			System.out.print(arr[i] + ", ");
 		}
@@ -55,7 +55,7 @@ public class IntTest
 		long end = System.currentTimeMillis();
 		long runtime = end - start;
 
-		for (int i = 0; i < arr.length; i++)
+		for(int i = 0; i < arr.length; i++)
 		{
 			System.out.print(arr[i] + ", ");
 		}

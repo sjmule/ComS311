@@ -14,6 +14,6 @@ public class IntComparator<T> implements Comparator<T>
 			throw new ClassCastException();
 		Integer a1 = (Integer) a;
 		Integer b1 = (Integer) b;
-		return a1.compareTo(b1);
+		return a1.intValue() - b1.intValue();
 	}
 }
