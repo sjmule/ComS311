@@ -8,12 +8,14 @@ import java.util.Map;
 public class CSGraph<S,T> implements Graph<S,T>
 {
 	private boolean isDirected;
-	private Map<String, S> vertices;
+	private Map<String, Vertex> vertices;
+	private Map<String, List<String>> edges;
 	
 	public CSGraph(boolean isDirected)
 	{
 		this.isDirected = isDirected;
-		vertices = new HashMap<String, S>();
+		vertices = new HashMap<String, Vertex>();
+		edges = new HashMap<String, List<String>>();
 	}
 	
 	/**
@@ -35,7 +37,8 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addVertex(String vertexLabel, S vertexData)
 	{
-		vertices.put(vertexLabel, vertexData);
+		Vertex v = new Vertex("1", "1");
+		vertices.put(vertexLabel, v);
 	}
 	
 	/**
@@ -69,7 +72,9 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addEdge(String sourceLabel, String targetLabel, T edgeData)
 	{
-		
+		vertices.get(sourceLabel).addNeighbor(targetLabel, 9);
+		if(!isDirected)
+			vertices.get(targetLabel).addNeighbor(sourceLabel, 9);
 	}
 	
 	/**
@@ -80,8 +85,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public T getEdgeData(String sourceLabel, String targetLabel)
 	{
-		new T;
-		return T;
+		
 	}
 	
 	/**
@@ -107,7 +111,8 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public int getNumEdges()
 	{
-		
+		//TODO make this better
+		return edges.size();
 	}
 	
 	/**
@@ -127,7 +132,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public Collection<String> getNeighbors(String label)
 	{
-		
+		//vertices.get(label).ge
 	}
 	
 	/**

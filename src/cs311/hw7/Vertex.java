@@ -1,19 +1,20 @@
 package cs311.hw7;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Vertex 
 {
 	private String lat;
 	private String lon;
-	private List<String> neighbors;
+	private Map<String, Double> neighbors;
 	
 	public Vertex(String lat, String lon)
 	{
 		this.lat = lat;
 		this.lon = lon;
-		neighbors = new ArrayList<String>();
+		neighbors = new HashMap<String, Double>();
 	}
 	
 	public String getLatitude()
@@ -26,8 +27,18 @@ public class Vertex
 		return lon;
 	}
 	
-	public List<String> getNeighbors()
+	public void addNeighbor(String neighbor, double cost)
 	{
-		return neighbors;
+		neighbors.put(neighbor, cost);
+	}
+	
+	public Set<String> getNeighbors()
+	{
+		return neighbors.keySet();
+	}
+	
+	public double getEdgeCost(String edge)
+	{
+		return neighbors.get(edge);
 	}
 }
