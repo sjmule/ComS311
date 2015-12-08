@@ -20,6 +20,7 @@ public interface Graph<S,T>
 	 * graph. If false, it is undirected.
 	 */
 	public boolean isDirected();
+	
 	/**
 	 * Adds a new vertex to the graph that is identified by the
 	 * label and has the given vertex data attached to it.
