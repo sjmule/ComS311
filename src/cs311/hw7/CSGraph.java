@@ -8,8 +8,8 @@ import java.util.Map;
 public class CSGraph<S,T> implements Graph<S,T>
 {
 	private boolean isDirected;
-	private Map<String, Vertex> vertices;
-	private Map<String, List<String>> edges;
+	private Map<String, Vertex> vertices; //Should be list
+	private Map<String, List<String>> edges; //Should be list
 	
 	public CSGraph(boolean isDirected)
 	{
@@ -85,7 +85,12 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public T getEdgeData(String sourceLabel, String targetLabel)
 	{
-		
+		findEdge(sourceLabel, targetLabel);
+	}
+	
+	public  findEdge(String source, String target)
+	{
+		//TODO make this work
 	}
 	
 	/**
