@@ -8,6 +8,6 @@ public class CSEdgeMeasure<T> implements EdgeMeasure<T>
 	 */
 	public double getCost(T edgeData)
 	{
-		return 1.0;
+		return (Double)edgeData;
 	}
 }

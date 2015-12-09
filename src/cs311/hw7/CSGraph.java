@@ -1,5 +1,6 @@
 package cs311.hw7;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +9,14 @@ import java.util.Map;
 public class CSGraph<S,T> implements Graph<S,T>
 {
 	private boolean isDirected;
-	private Map<String, Vertex> vertices; //Should be list
-	private Map<String, List<String>> edges; //Should be list
+	private Map<String, Vertex<S,T>> vertices;
+	private List<Edge<T>> edges;
 	
 	public CSGraph(boolean isDirected)
 	{
 		this.isDirected = isDirected;
-		vertices = new HashMap<String, Vertex>();
-		edges = new HashMap<String, List<String>>();
+		vertices = new HashMap<String, Vertex<S,T>>();
+		edges = new ArrayList<Edge<T>>();
 	}
 	
 	/**
@@ -37,7 +38,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addVertex(String vertexLabel, S vertexData)
 	{
-		Vertex v = new Vertex("1", "1");
+		Vertex<S,T> v = new Vertex(vertexLabel, vertexData);
 		vertices.put(vertexLabel, v);
 	}
 	
@@ -49,8 +50,18 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void removeVertex(String vertexLabel)
 	{
-		vertices.remove(vertexLabel);
-		//TODO remove edge data
+		if(vertices.containsKey(vertexLabel))
+		{
+			if(!isDirected)
+			{
+				Vertex<S,T> v = vertices.get(vertexLabel);
+				for(String s : v.getNeighbors())
+				{
+					vertices.get(s).removeNeighbor(vertexLabel);
+				}
+			}
+			vertices.remove(vertexLabel);
+		}
 	}
 	
 	/**
@@ -72,9 +83,12 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addEdge(String sourceLabel, String targetLabel, T edgeData)
 	{
-		vertices.get(sourceLabel).addNeighbor(targetLabel, 9);
+		Edge<T> e = new Edge(sourceLabel, targetLabel, edgeData);
+		edges.add(e);
+		
+		vertices.get(sourceLabel).addNeighbor(targetLabel, e);
 		if(!isDirected)
-			vertices.get(targetLabel).addNeighbor(sourceLabel, 9);
+			vertices.get(targetLabel).addNeighbor(sourceLabel, e);
 	}
 	
 	/**
@@ -85,12 +99,13 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public T getEdgeData(String sourceLabel, String targetLabel)
 	{
-		findEdge(sourceLabel, targetLabel);
-	}
-	
-	public  findEdge(String source, String target)
-	{
-		//TODO make this work
+		for(Edge<T> e : edges)
+		{
+			if(e.getSource().equals(sourceLabel))
+				if(e.getTarget().equals(targetLabel))
+					return e.getData();
+		}
+		return null;
 	}
 	
 	/**
@@ -100,8 +115,9 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public S getVertexData(String label)
 	{
-		return vertices.get(label);
+		return vertices.get(label).getData();
 	}
+	
 
 	/**
 	 * Returns the number of vertices in the graph.
@@ -110,15 +126,16 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		return vertices.size();
 	}
+	
 
 	/**
 	 * Returns the number of edges in the graph.
 	 */
 	public int getNumEdges()
 	{
-		//TODO make this better
 		return edges.size();
 	}
+	
 	
 	/**
 	 * Returns a collection of the labels of all the vertices
@@ -129,6 +146,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return vertices.keySet();
 	}
 	
+	
 	/**
 	 * Returns a collection of all the adjacent vertices of the
 	 * given vertex.
@@ -137,8 +155,9 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public Collection<String> getNeighbors(String label)
 	{
-		//vertices.get(label).ge
+		return vertices.get(label).getNeighbors();
 	}
+	
 	
 	/**
 	 * Returns a valid topological sort if the graph is a
@@ -146,8 +165,14 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public List<String> topologicalSort()
 	{
+		if(!isDirected)
+			return null;
 		
+		List<String> returnList = new ArrayList<String>();
+		//TODO
+		return returnList;
 	}
+	
 	
 	/**
 	 * Returns the shortest path from the start vertex to
@@ -165,8 +190,43 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public List<String> shortestPath(String startLabel, String destLabel, EdgeMeasure<T> measure)
 	{
+		List<String> path = new ArrayList<String>();
+		List<String> open = new ArrayList<String>();
+		path.add(startLabel);
 		
+		//TODO 10/29
+		for(String s : vertices.keySet())
+		{
+			open.add(s);
+			vertices.get(s).setDist(Double.MAX_VALUE);
+			vertices.get(s).setPred(null);
+		}
+		vertices.get(startLabel).setDist(0);
+		String v = startLabel;
+		
+		while(!open.isEmpty())
+		{
+			List<String> contained = new ArrayList<String>();
+			for(String s : open)
+			{
+				if(vertices.get(v).getNeighbors().contains(s))
+					contained.add(s);
+			}
+			if(contained.size() > 0)
+				getMin(contained);
+		}
+		
+		return path;
 	}
+	
+	private double getMin(List<String> list)
+	{
+		double min = 0;
+		
+		
+		return min;
+	}
+	
 	
 	/**
 	 * Returns a minimum spanning tree for the graph with
@@ -181,6 +241,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 		
 	}
 	
+	
 	/**
 	 * Computes the total cost of the graph. The total cost is
 	 * the sum of the costs of every edge in the graph.
@@ -190,6 +251,11 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public double getTotalCost(EdgeMeasure<T> measure)
 	{
-		
+		double cost = 0;
+		for(Edge<T> e : edges)
+		{
+			cost += measure.getCost(e.getData());
+		}
+		return cost;
 	}
 }

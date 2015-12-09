@@ -1,16 +1,17 @@
 package cs311.hw7;
 
-public class Edge 
+public class Edge<T>
 {
 	private String source;
 	private String target;
-	private double distance;
+	private T data;
+	private State state;
 	
-	public Edge(String source, String target, double distance)
+	public Edge(String source, String target, T data)
 	{
 		this.source = source;
 		this.target = target;
-		this.distance = distance;
+		this.data = data;
 	}
 	
 	public String getSource()
@@ -23,9 +24,18 @@ public class Edge
 		return target;
 	}
 	
-	public double getDistance()
+	public T getData()
 	{
-		return distance;
+		return data;
 	}
 	
+	public void setState(State state)
+	{
+		this.state = state;
+	}
+	
+	public State getState()
+	{
+		return state;
+	}
 }

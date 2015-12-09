@@ -4,32 +4,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Vertex 
+public class Vertex<S,T> 
 {
-	private String lat;
-	private String lon;
-	private Map<String, Double> neighbors;
+	private String label;
+	private S data;
+	private Map<String, Edge<T>> neighbors;
+	private String pred;
+	private double dist;
 	
-	public Vertex(String lat, String lon)
+	public Vertex(String label, S data)
 	{
-		this.lat = lat;
-		this.lon = lon;
-		neighbors = new HashMap<String, Double>();
+		this.label = label;
+		this.data = data;
+		neighbors = new HashMap<String, Edge<T>>();
 	}
 	
-	public String getLatitude()
+	public String getLabel()
 	{
-		return lat;
+		return label;
 	}
 	
-	public String getLongitude()
+	public S getData()
 	{
-		return lon;
+		return data;
 	}
 	
-	public void addNeighbor(String neighbor, double cost)
+	public void addNeighbor(String neighbor, Edge<T> edge)
 	{
-		neighbors.put(neighbor, cost);
+		neighbors.put(neighbor, edge);
 	}
 	
 	public Set<String> getNeighbors()
@@ -37,8 +39,33 @@ public class Vertex
 		return neighbors.keySet();
 	}
 	
-	public double getEdgeCost(String edge)
+	public void removeNeighbor(String neighbor)
 	{
-		return neighbors.get(edge);
+		neighbors.remove(neighbor);
+	}
+	
+	public Map<String, Edge<T>> getNeighborsWithEdges()
+	{
+		return neighbors;
+	}
+	
+	public void setPred(String pred)
+	{
+		this.pred = pred;
+	}
+	
+	public String getPred()
+	{
+		return pred;
+	}
+	
+	public void setDist(double dist)
+	{
+		this.dist = dist;
+	}
+	
+	public double getDist()
+	{
+		return dist;
 	}
 }
