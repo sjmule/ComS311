@@ -11,6 +11,7 @@ public class Vertex<S,T>
 	private Map<String, Edge<T>> neighbors;
 	private String pred;
 	private double dist;
+	private State state;
 	
 	public Vertex(String label, S data)
 	{
@@ -67,5 +68,15 @@ public class Vertex<S,T>
 	public double getDist()
 	{
 		return dist;
+	}
+	
+	public void setState(State state)
+	{
+		this.state = state;
+	}
+	
+	public State getState()
+	{
+		return state;
 	}
 }

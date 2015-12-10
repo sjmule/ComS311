@@ -5,18 +5,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class CSGraph<S,T> implements Graph<S,T>
 {
 	private boolean isDirected;
 	private Map<String, Vertex<S,T>> vertices;
 	private List<Edge<T>> edges;
+	private List<String> verticesStrings;
 	
 	public CSGraph(boolean isDirected)
 	{
 		this.isDirected = isDirected;
 		vertices = new HashMap<String, Vertex<S,T>>();
 		edges = new ArrayList<Edge<T>>();
+		verticesStrings = new ArrayList<String>();
 	}
 	
 	/**
@@ -38,8 +41,12 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addVertex(String vertexLabel, S vertexData)
 	{
-		Vertex<S,T> v = new Vertex(vertexLabel, vertexData);
-		vertices.put(vertexLabel, v);
+		if(!verticesStrings.contains(vertexLabel))
+		{
+			Vertex<S,T> v = new Vertex(vertexLabel, vertexData);
+			vertices.put(vertexLabel, v);
+			verticesStrings.add(vertexLabel);
+		}
 	}
 	
 	/**
@@ -50,17 +57,27 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void removeVertex(String vertexLabel)
 	{
-		if(vertices.containsKey(vertexLabel))
+		if(verticesStrings.contains(vertexLabel))
 		{
-			if(!isDirected)
+			Vertex<S,T> v = vertices.get(vertexLabel);
+			Map<String, Edge<T>> ed = v.getNeighborsWithEdges();
+			for(String s : ed.keySet())
 			{
-				Vertex<S,T> v = vertices.get(vertexLabel);
+				edges.remove(ed.get(s)); // Remove all edges that vertex is a source of or if undirected source/target
+			}
+			if(isDirected)
+			{
+				//TODO remove all edges vertex is a target of
+			}
+			if(!isDirected)
+			{	
 				for(String s : v.getNeighbors())
 				{
-					vertices.get(s).removeNeighbor(vertexLabel);
+					vertices.get(s).removeNeighbor(vertexLabel); // If undirected remove vertex from neighbors' neighbor list
 				}
 			}
-			vertices.remove(vertexLabel);
+			vertices.remove(vertexLabel); // Delete the vertex
+			verticesStrings.remove(vertexLabel);
 		}
 	}
 	
@@ -124,7 +141,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public int getNumVertices()
 	{
-		return vertices.size();
+		return verticesStrings.size();
 	}
 	
 
@@ -143,7 +160,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public Collection<String> getVertices()
 	{
-		return vertices.keySet();
+		return verticesStrings;
 	}
 	
 	
@@ -169,10 +186,29 @@ public class CSGraph<S,T> implements Graph<S,T>
 			return null;
 		
 		List<String> returnList = new ArrayList<String>();
+		Stack<String> stack = new Stack<String>();
 		//TODO
+		for(String s : verticesStrings)
+		{
+			vertices.get(s).setState(State.UNDISCOVERD);
+		}
+		Vertex<S,T> v = vertices.get(verticesStrings.get(0));
+		for(String s : v.getNeighbors())
+		{
+			DFS(s);
+		}
+		
 		return returnList;
 	}
 	
+	private void DFS(String vertex)
+	{
+		//TODO
+		if(vertices.get(vertex).getState() == State.UNDISCOVERD)
+		{
+			vertices.get(vertex).setState(State.DISCOVERED);
+		}
+	}
 	
 	/**
 	 * Returns the shortest path from the start vertex to
@@ -221,6 +257,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	
 	private double getMin(List<String> list)
 	{
+		//TODO
 		double min = 0;
 		
 		
@@ -238,7 +275,9 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public Graph<S,T> minimumSpanningTree(EdgeMeasure<T> measure)
 	{
-		
+		Graph<S,T> graph = new CSGraph<S,T>(false);
+		//TODO
+		return graph;
 	}
 	
 	
