@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.PriorityQueue;
 
 public class CSGraph<S,T> implements Graph<S,T>
 {
@@ -43,7 +43,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		if(!verticesStrings.contains(vertexLabel))
 		{
-			Vertex<S,T> v = new Vertex(vertexLabel, vertexData);
+			Vertex<S,T> v = new Vertex<S,T>(vertexLabel, vertexData);
 			vertices.put(vertexLabel, v);
 			verticesStrings.add(vertexLabel);
 		}
@@ -67,9 +67,14 @@ public class CSGraph<S,T> implements Graph<S,T>
 			}
 			if(isDirected)
 			{
-				//TODO remove all edges vertex is a target of
+				List<Edge<T>> incoming = findIncomingEdges(vertexLabel);
+				for(Edge<T> e : incoming)
+				{
+					vertices.get(e.getSource()).removeNeighbor(vertexLabel); // Remove this edge as a neighbor to all nodes that consider it to be one
+					edges.remove(e); // Remove all edges for which this edge is a target
+				}
 			}
-			if(!isDirected)
+			else
 			{	
 				for(String s : v.getNeighbors())
 				{
@@ -100,7 +105,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public void addEdge(String sourceLabel, String targetLabel, T edgeData)
 	{
-		Edge<T> e = new Edge(sourceLabel, targetLabel, edgeData);
+		Edge<T> e = new Edge<T>(sourceLabel, targetLabel, edgeData);
 		edges.add(e);
 		
 		vertices.get(sourceLabel).addNeighbor(targetLabel, e);
@@ -116,13 +121,29 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public T getEdgeData(String sourceLabel, String targetLabel)
 	{
+		return findEdge(sourceLabel, targetLabel).getData();
+	}
+	
+	private Edge<T> findEdge(String sourceLabel, String targetLabel)
+	{
 		for(Edge<T> e : edges)
 		{
 			if(e.getSource().equals(sourceLabel))
 				if(e.getTarget().equals(targetLabel))
-					return e.getData();
+					return e;
 		}
 		return null;
+	}
+
+	private List<Edge<T>> findIncomingEdges(String targetLabel)
+	{
+		List<Edge<T>> incoming = new ArrayList<Edge<T>>();
+		for(Edge<T> e : edges)
+		{
+			if(e.getTarget().equals(targetLabel))
+				incoming.add(e);
+		}
+		return incoming;
 	}
 	
 	/**
@@ -184,30 +205,32 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		if(!isDirected)
 			return null;
-		
-		List<String> returnList = new ArrayList<String>();
-		Stack<String> stack = new Stack<String>();
-		//TODO
+		List<String> list = new ArrayList<String>();
+		List<String> toAlter = new ArrayList<String>();
 		for(String s : verticesStrings)
 		{
 			vertices.get(s).setState(State.UNDISCOVERD);
+			toAlter.add(s);
 		}
-		Vertex<S,T> v = vertices.get(verticesStrings.get(0));
-		for(String s : v.getNeighbors())
-		{
-			DFS(s);
-		}
-		
-		return returnList;
+		while(!toAlter.isEmpty())
+			DFS(toAlter.get(0), list, toAlter);
+		return list;
 	}
 	
-	private void DFS(String vertex)
+	private void DFS(String vertex, List<String> resultList, List<String> workingList)
 	{
-		//TODO
-		if(vertices.get(vertex).getState() == State.UNDISCOVERD)
+		Vertex<S,T> v = vertices.get(vertex);
+		for(String s : v.getNeighbors())
 		{
-			vertices.get(vertex).setState(State.DISCOVERED);
+			if(vertices.get(s).getState() == State.UNDISCOVERD)
+			{
+				vertices.get(s).setState(State.DISCOVERED);
+				DFS(s, resultList, workingList);
+			}
 		}
+		v.setState(State.PROCESSED);
+		resultList.add(vertex);
+		workingList.remove(vertex);
 	}
 	
 	/**
@@ -276,7 +299,17 @@ public class CSGraph<S,T> implements Graph<S,T>
 	public Graph<S,T> minimumSpanningTree(EdgeMeasure<T> measure)
 	{
 		Graph<S,T> graph = new CSGraph<S,T>(false);
-		//TODO
+		PriorityQueue<Edge<T>> pq = new PriorityQueue<>(new EdgeComparator<Edge<T>>());
+		int count = 0;
+		//TODO - Kruskal's 10/29
+		for(String s : verticesStrings)
+			graph.addVertex(s, vertices.get(s).getData());
+		for(Edge<T> e : edges)
+			pq.add(e);
+		while(count < verticesStrings.size()-1)
+		{
+			Edge<T> edge = pq.poll();
+		}
 		return graph;
 	}
 	
