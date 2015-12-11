@@ -195,6 +195,13 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return vertices.get(label).getNeighbors();
 	}
 	
+	public void removeEdge(Edge<T> edge)
+	{
+		vertices.get(edge.getSource()).removeNeighbor(edge.getTarget());
+		if(!isDirected)
+			vertices.get(edge.getTarget()).removeNeighbor(edge.getSource());
+		edges.remove(edge);
+	}
 	
 	/**
 	 * Returns a valid topological sort if the graph is a
@@ -216,8 +223,9 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return list;
 	}
 	
-	private void DFS(String vertex, List<String> resultList, List<String> workingList)
+	private boolean DFS(String vertex, List<String> resultList, List<String> workingList)
 	{
+		boolean loop = false;
 		Vertex<S,T> v = vertices.get(vertex);
 		for(String s : v.getNeighbors())
 		{
@@ -226,10 +234,13 @@ public class CSGraph<S,T> implements Graph<S,T>
 				vertices.get(s).setState(State.DISCOVERED);
 				DFS(s, resultList, workingList);
 			}
+			else
+				loop = true;
 		}
 		v.setState(State.PROCESSED);
 		resultList.add(vertex);
 		workingList.remove(vertex);
+		return loop;
 	}
 	
 	/**
@@ -297,7 +308,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	 */
 	public Graph<S,T> minimumSpanningTree(EdgeMeasure<T> measure)
 	{
-		Graph<S,T> graph = new CSGraph<S,T>(false);
+		CSGraph<S,T> graph = new CSGraph<S,T>(false);
 		List<Edge<T>> pq = mergeSort(edges);
 		int count = 0;
 		//TODO - Kruskal's 10/29
@@ -315,7 +326,7 @@ public class CSGraph<S,T> implements Graph<S,T>
 	private List<Edge<T>> mergeSort(List<Edge<T>> list)
 	{
 		List<Edge<T>> toReturn = new ArrayList<Edge<T>>();
-		Object array[] = recursiveMergeSort(list.toArray(), 0, toReturn.size()-1);
+		Object[] array = recursiveMergeSort(list.toArray(), 0, toReturn.size()-1);
 		for(int i = 0; i < array.length; i++)
 		{
 			toReturn.add((Edge<T>) array[i]);
@@ -336,9 +347,44 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return array;
 	}
 	
-	private void merge()
+	private void merge(Object[] array, int left, int mid, int right)
 	{
+		Object[] temp = new Object[edges.size()];
+		int left_end = (mid-1);
+		int tmp_pos = left;
+		int num_elements = right - left + 1;
 		
+		while((left<=left_end) && (mid <= right))
+		{
+			Edge<T> a = (Edge<T>) array[left];
+			Edge<T> b = (Edge<T>) array[mid];
+			if((Double)a.getData() <= (Double)b.getData())
+				temp[tmp_pos++] = array[left++];
+			else
+				temp[tmp_pos++] = array[mid++];
+		}
+		
+		while(left <= left_end)
+			temp[tmp_pos++] = array[left++];
+		
+		while(mid <= right)
+			temp[tmp_pos++] = array[mid++];
+		
+		for(int i = 0; i < num_elements; i++)
+		{
+			array[right] = temp[right];
+			right--;
+		}
+	}
+	
+	public boolean findCycles(CSGraph graph)
+	{
+		boolean loop = false;
+		Set<Vertex<S,T>> verts = (Vertex<S,T>) 
+		for(String s : graph.getVertices())
+		{
+			vertices.get(s).setState(State.UNDISCOVERD);
+		}
 	}
 	
 	/**
