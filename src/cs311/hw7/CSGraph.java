@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 public class CSGraph<S,T> implements Graph<S,T>
 {
@@ -299,20 +298,48 @@ public class CSGraph<S,T> implements Graph<S,T>
 	public Graph<S,T> minimumSpanningTree(EdgeMeasure<T> measure)
 	{
 		Graph<S,T> graph = new CSGraph<S,T>(false);
-		PriorityQueue<Edge<T>> pq = new PriorityQueue<>(new EdgeComparator<Edge<T>>());
+		List<Edge<T>> pq = mergeSort(edges);
 		int count = 0;
 		//TODO - Kruskal's 10/29
 		for(String s : verticesStrings)
+		{
 			graph.addVertex(s, vertices.get(s).getData());
-		for(Edge<T> e : edges)
-			pq.add(e);
+		}
 		while(count < verticesStrings.size()-1)
 		{
-			Edge<T> edge = pq.poll();
+			Edge<T> edge = pq.remove(0);
 		}
 		return graph;
 	}
 	
+	private List<Edge<T>> mergeSort(List<Edge<T>> list)
+	{
+		List<Edge<T>> toReturn = new ArrayList<Edge<T>>();
+		Object array[] = recursiveMergeSort(list.toArray(), 0, toReturn.size()-1);
+		for(int i = 0; i < array.length; i++)
+		{
+			toReturn.add((Edge<T>) array[i]);
+		}
+		return toReturn;
+	}
+	
+	private Object[] recursiveMergeSort(Object[] array, int left, int right)
+	{
+		if(right > left)
+		{
+			int mid = (left + right) / 2;
+			recursiveMergeSort(array, left, mid);
+			recursiveMergeSort(array, mid+1, right);
+			
+			merge(array, left, mid+1, right);
+		}
+		return array;
+	}
+	
+	private void merge()
+	{
+		
+	}
 	
 	/**
 	 * Computes the total cost of the graph. The total cost is
