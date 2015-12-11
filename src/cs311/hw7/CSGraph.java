@@ -155,7 +155,6 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return vertices.get(label).getData();
 	}
 	
-
 	/**
 	 * Returns the number of vertices in the graph.
 	 */
@@ -164,7 +163,6 @@ public class CSGraph<S,T> implements Graph<S,T>
 		return verticesStrings.size();
 	}
 	
-
 	/**
 	 * Returns the number of edges in the graph.
 	 */
@@ -172,7 +170,6 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		return edges.size();
 	}
-	
 	
 	/**
 	 * Returns a collection of the labels of all the vertices
@@ -182,7 +179,6 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		return verticesStrings;
 	}
-	
 	
 	/**
 	 * Returns a collection of all the adjacent vertices of the
@@ -215,17 +211,16 @@ public class CSGraph<S,T> implements Graph<S,T>
 		List<String> toAlter = new ArrayList<String>();
 		for(String s : verticesStrings)
 		{
-			vertices.get(s).setState(State.UNDISCOVERD);
+			vertices.get(s).setState(State.UNDISCOVERD); //Runs in O(|V|) time
 			toAlter.add(s);
 		}
 		while(!toAlter.isEmpty())
-			DFS(toAlter.get(0), list, toAlter);
+			DFS(toAlter.get(0), list, toAlter); //Runs in O(|E|) time
 		return list;
 	}
 	
-	private boolean DFS(String vertex, List<String> resultList, List<String> workingList)
+	private void DFS(String vertex, List<String> resultList, List<String> workingList)
 	{
-		boolean loop = false;
 		Vertex<S,T> v = vertices.get(vertex);
 		for(String s : v.getNeighbors())
 		{
@@ -234,13 +229,10 @@ public class CSGraph<S,T> implements Graph<S,T>
 				vertices.get(s).setState(State.DISCOVERED);
 				DFS(s, resultList, workingList);
 			}
-			else
-				loop = true;
 		}
 		v.setState(State.PROCESSED);
 		resultList.add(vertex);
 		workingList.remove(vertex);
-		return loop;
 	}
 	
 	/**
@@ -261,12 +253,13 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		List<String> path = new ArrayList<String>();
 		List<String> open = new ArrayList<String>();
+		List<String> closed = new ArrayList<String>();
 		path.add(startLabel);
+		open.add(startLabel);
 		
 		//TODO 10/29
 		for(String s : vertices.keySet())
 		{
-			open.add(s);
 			vertices.get(s).setDist(Double.MAX_VALUE);
 			vertices.get(s).setPred(null);
 		}
@@ -275,28 +268,37 @@ public class CSGraph<S,T> implements Graph<S,T>
 		
 		while(!open.isEmpty())
 		{
-			List<String> contained = new ArrayList<String>();
+			//Vertex<S,T> vert = 
 			for(String s : open)
 			{
 				if(vertices.get(v).getNeighbors().contains(s))
-					contained.add(s);
+				{
+					
+				}
 			}
-			if(contained.size() > 0)
-				getMin(contained);
 		}
 		
 		return path;
 	}
 	
-	private double getMin(List<String> list)
+	private Vertex<S,T> getMin(List<String> list, Vertex<S,T> vertex)
 	{
+		for(String s : list)
+		{
+			 
+		}
 		//TODO
-		double min = 0;
-		
+		Vertex<S,T> min = new Vertex<S,T>(null,null);
+		//Calculate the distance from start to all others
+		 
 		
 		return min;
 	}
 	
+	private void calculateDistance(List<String> list, Vertex<S,T> start, Vertex<S,T> end)
+	{
+		
+	}
 	
 	/**
 	 * Returns a minimum spanning tree for the graph with
@@ -309,16 +311,22 @@ public class CSGraph<S,T> implements Graph<S,T>
 	public Graph<S,T> minimumSpanningTree(EdgeMeasure<T> measure)
 	{
 		CSGraph<S,T> graph = new CSGraph<S,T>(false);
-		List<Edge<T>> pq = mergeSort(edges);
-		int count = 0;
-		//TODO - Kruskal's 10/29
+		List<Edge<T>> pq = mergeSort(edges); //Runs in O(|E|log|E|) time
 		for(String s : verticesStrings)
 		{
 			graph.addVertex(s, vertices.get(s).getData());
 		}
-		while(count < verticesStrings.size()-1)
+		while((!pq.isEmpty()) && (graph.getNumEdges() < graph.getNumVertices()-1))
 		{
 			Edge<T> edge = pq.remove(0);
+			for(String s : graph.verticesStrings)
+			{
+				graph.vertices.get(s).setState(State.UNDISCOVERD);
+			}
+			if(graph.findCycles(graph.vertices.get(edge.getSource())))
+			{
+				graph.removeEdge(edge);
+			}
 		}
 		return graph;
 	}
@@ -377,14 +385,21 @@ public class CSGraph<S,T> implements Graph<S,T>
 		}
 	}
 	
-	public boolean findCycles(CSGraph graph)
+	private boolean findCycles(Vertex<S,T> vertex)
 	{
 		boolean loop = false;
-		Set<Vertex<S,T>> verts = (Vertex<S,T>) 
-		for(String s : graph.getVertices())
+		for(String s : vertex.getNeighbors())
 		{
-			vertices.get(s).setState(State.UNDISCOVERD);
+			if(vertices.get(s).getState() == State.UNDISCOVERD)
+			{
+				vertices.get(s).setState(State.DISCOVERED);
+				loop = findCycles(vertices.get(s));
+			}
+			else
+				loop = true;
 		}
+		vertex.setState(State.PROCESSED);
+		return loop;
 	}
 	
 	/**
