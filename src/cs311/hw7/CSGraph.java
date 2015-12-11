@@ -254,50 +254,63 @@ public class CSGraph<S,T> implements Graph<S,T>
 		List<String> path = new ArrayList<String>();
 		List<String> open = new ArrayList<String>();
 		List<String> closed = new ArrayList<String>();
-		path.add(startLabel);
 		open.add(startLabel);
 		
-		//TODO 10/29
 		for(String s : vertices.keySet())
 		{
 			vertices.get(s).setDist(Double.MAX_VALUE);
 			vertices.get(s).setPred(null);
 		}
 		vertices.get(startLabel).setDist(0);
-		String v = startLabel;
 		
 		while(!open.isEmpty())
 		{
-			//Vertex<S,T> vert = 
-			for(String s : open)
+			Vertex<S,T> vert = getMin(open);
+			closed.add(vert.getLabel());
+			open.remove(vert.getLabel());
+			for(String s : vert.getNeighbors())
 			{
-				if(vertices.get(v).getNeighbors().contains(s))
+				if(!closed.contains(s))
 				{
-					
+					double alt = vert.getDist() + measure.getCost(findEdge(vert.getLabel(), s).getData());
+					if(alt < vertices.get(s).getDist())
+					{
+						open.add(s);
+						vertices.get(s).setDist(alt);
+						vertices.get(s).setPred(vert.getLabel());
+					}
 				}
 			}
 		}
+		calculatePath(closed, startLabel, destLabel, path);
 		
 		return path;
 	}
 	
-	private Vertex<S,T> getMin(List<String> list, Vertex<S,T> vertex)
+	private Vertex<S,T> getMin(List<String> list)
 	{
+		double minDist = Double.MAX_VALUE;
+		Vertex<S,T> min = new Vertex<S,T>(null, null);
 		for(String s : list)
 		{
-			 
+			if(vertices.get(s).getDist() < minDist)
+			{
+				min = vertices.get(s);
+			}
 		}
-		//TODO
-		Vertex<S,T> min = new Vertex<S,T>(null,null);
-		//Calculate the distance from start to all others
-		 
 		
 		return min;
 	}
 	
-	private void calculateDistance(List<String> list, Vertex<S,T> start, Vertex<S,T> end)
+	private void calculatePath(List<String> verts, String start, String end, List<String> path)
 	{
-		
+		if(end.equals(start))
+		{
+			path.add(end);
+		}
+		else
+			calculatePath(verts, start, vertices.get(end).getPred(), path);
+		path.equals(end);
 	}
 	
 	/**
