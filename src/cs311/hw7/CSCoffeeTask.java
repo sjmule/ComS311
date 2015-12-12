@@ -3,6 +3,7 @@ package cs311.hw7;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class CSCoffeeTask<S,T> implements CoffeeTask
 {
@@ -69,8 +70,25 @@ public class CSCoffeeTask<S,T> implements CoffeeTask
 	public List<Integer> getShortestRoute(File amesFile, List<Integer> ingList)
 	{
 		List<Integer> route = new ArrayList<Integer>();
-		parseFile(amesFile);
-		
+		CSGraph<S,T> graph = parseFile(amesFile, true);
+		List<String> path = graph.shortestPath("1067", ingList.get(0).toString(), new CSEdgeMeasure<T>());
+		for(String s : path)
+		{
+			route.add(Integer.parseInt(s));
+		}
+		for(int i = 0; i < ingList.size()-1; i++)
+		{
+			List<String> pat = graph.shortestPath(ingList.get(i).toString(), ingList.get(i+1).toString(), new CSEdgeMeasure<T>());
+			for(String s : pat)
+			{
+				route.add(Integer.parseInt(s));
+			}
+		}
+		List<String> pat = graph.shortestPath(ingList.get(ingList.size()-1).toString(), "826", new CSEdgeMeasure<T>());
+		for(String s : pat)
+		{
+			route.add(Integer.parseInt(s));
+		}
 		return route;
 	}
 	
@@ -86,13 +104,40 @@ public class CSCoffeeTask<S,T> implements CoffeeTask
 	 */
 	public double getMSTCost(File amesFile)
 	{
-		
+		CSGraph<S,T> graph = parseFile(amesFile, false);
+		CSGraph<S,T> min = (CSGraph) graph.minimumSpanningTree(new CSEdgeMeasure<T>());
+		return min.getTotalCost(new CSEdgeMeasure<T>());
 	}
 	
-	private CSGraph<S,T> parseFile(File file)
+	private CSGraph<S,T> parseFile(File file, boolean directed)
 	{
-		CSGraph<S,T> graph = new CSGraph<S,T>(true);
-		
+		CSGraph<S,T> graph = new CSGraph<S,T>(directed);
+		try
+		{
+			Scanner scanner = new Scanner(file);
+			String line = scanner.nextLine();
+			String[] parts = line.split("\\s+");
+			int verts = Integer.parseInt(parts[1]);
+			for(int i = 0; i < verts; i++)
+			{
+				line = scanner.nextLine();
+				String[] par = line.split(",");
+				String data = par[1] + par[2];
+				graph.addVertex(par[0], (S)data);
+			}
+			line = scanner.nextLine();
+			String[] partz = line.split("\\s+");
+			int edgez = Integer.parseInt(partz[1]);
+			for(int i = 0; i < edgez; i++)
+			{
+				line = scanner.nextLine();
+				String[] par = line.split(",");
+				Double data = Double.parseDouble(par[2]);
+				graph.addEdge(par[0], par[1], (T)data);
+			}
+			scanner.close();
+		}
+		catch(Exception e){}
 		return graph;
 	}
 }
