@@ -2,38 +2,34 @@ package cs311.hw7;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CSCoffeeTask<S,T> implements CoffeeTask
 {
 	private CSGraph<S,T> dep;
-	private Map<String, Integer> mappings;
 	
 	public CSCoffeeTask()
 	{
-		mappings = new HashMap<String, Integer>();
-		mappings.put("A", 981);
-		mappings.put("B", 1653);
-		mappings.put("C", 524);
-		mappings.put("D", 1864);
-		mappings.put("E", 1119);
-		mappings.put("F", 1104);
+//		mappings.put(981, "A");
+//		mappings.put(1653, "B");
+//		mappings.put(524, "C");
+//		mappings.put(1864, "D");
+//		mappings.put(1119, "E");
+//		mappings.put(1104, "F");
 		dep = new CSGraph<S,T>(true);
-		dep.addVertex("A", null);
-		dep.addVertex("B", null);
-		dep.addVertex("C", null);
-		dep.addVertex("D", null);
-		dep.addVertex("E", null);
-		dep.addVertex("F", null);
-		dep.addEdge("C", "A", null);
-		dep.addEdge("C", "B", null);
-		dep.addEdge("C", "F", null);
-		dep.addEdge("D", "B", null);
-		dep.addEdge("D", "C", null);
-		dep.addEdge("E", "C", null);
-		dep.addEdge("E", "F", null);
+		dep.addVertex("981", null);
+		dep.addVertex("1653", null);
+		dep.addVertex("524", null);
+		dep.addVertex("1864", null);
+		dep.addVertex("1119", null);
+		dep.addVertex("1104", null);
+		dep.addEdge("524", "981", null);
+		dep.addEdge("524", "1653", null);
+		dep.addEdge("524", "1104", null);
+		dep.addEdge("1864", "1653", null);
+		dep.addEdge("1864", "524", null);
+		dep.addEdge("1119", "524", null);
+		dep.addEdge("1119", "1104", null);
 		
 	}
 	
@@ -51,7 +47,7 @@ public class CSCoffeeTask<S,T> implements CoffeeTask
 		List<Integer> topz = new ArrayList<Integer>();
 		for(String s : top)
 		{
-			topz.add(mappings.get(s));
+			topz.add(Integer.parseInt(s));
 		}
 		return topz;
 	}
@@ -72,7 +68,10 @@ public class CSCoffeeTask<S,T> implements CoffeeTask
 	 */
 	public List<Integer> getShortestRoute(File amesFile, List<Integer> ingList)
 	{
+		List<Integer> route = new ArrayList<Integer>();
+		parseFile(amesFile);
 		
+		return route;
 	}
 	
 	/**
@@ -88,5 +87,12 @@ public class CSCoffeeTask<S,T> implements CoffeeTask
 	public double getMSTCost(File amesFile)
 	{
 		
+	}
+	
+	private CSGraph<S,T> parseFile(File file)
+	{
+		CSGraph<S,T> graph = new CSGraph<S,T>(true);
+		
+		return graph;
 	}
 }

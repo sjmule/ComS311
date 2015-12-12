@@ -109,7 +109,11 @@ public class CSGraph<S,T> implements Graph<S,T>
 		
 		vertices.get(sourceLabel).addNeighbor(targetLabel, e);
 		if(!isDirected)
-			vertices.get(targetLabel).addNeighbor(sourceLabel, e);
+		{
+			Edge<T> ed = new Edge<T>(targetLabel, sourceLabel, edgeData);
+			vertices.get(targetLabel).addNeighbor(sourceLabel, ed);
+			edges.add(ed);
+		}
 	}
 	
 	/**
@@ -195,7 +199,11 @@ public class CSGraph<S,T> implements Graph<S,T>
 	{
 		vertices.get(edge.getSource()).removeNeighbor(edge.getTarget());
 		if(!isDirected)
+		{
 			vertices.get(edge.getTarget()).removeNeighbor(edge.getSource());
+			Edge<T> e = new Edge<T>(edge.getTarget(), edge.getSource(), edge.getData());
+			edges.remove(e);
+		}
 		edges.remove(edge);
 	}
 	
